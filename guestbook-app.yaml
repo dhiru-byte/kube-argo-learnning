@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook-app
+  namespace: argocd # Argo CD is typically installed in the 'argocd' namespace
+spec:
+  project: default # Assign to the default project
+  source:
+    repoURL: https://github.com/dhiru-byte/kube-argo-learnning.git # Replace with your GitHub repo URL
+    targetRevision: HEAD # You can also specify a branch, tag, or commit SHA
+    path: guestbook # The path within your repository to the Kubernetes manifests
+  destination:
+    server: https://kubernetes.default.svc # The Kubernetes API server URL
+    namespace: guestbook-dev # The namespace where you want the app deployed (ensure it exists or use sync options)
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true # Automatically sync if the live state diverges from Git
+    syncOptions:
+      - CreateNamespace=true # Automatically create the destination namespace if it doesn't exist
